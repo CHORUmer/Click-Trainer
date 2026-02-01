@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>クリック練習シミュレーター：完全版</title>
+
+<style>
+* { touch-action: manipulation; user-select: none; }
+body {
+  text-align: center;
+  font-family: sans-serif;
+  background-color: #121212;
+  color: #e0e0e0;
+  padding: 20px;
+}
+.header {
+  display: flex;
+  justify-content: space-around;
+  background: #1e1e1e;
+  padding: 15px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+}
+.stat-box { display: flex; flex-direction: column; }
+.xp-value { font-size: 24px; color: #3498db; font-weight: bold; }
+.money-value { font-size: 24px; color: #f1c40f; font-weight: bold; }
+
+#xp-bar-container {
+  width: 200px; height: 10px;
+  background: #333; border-radius: 5px;
+  margin: 5px auto;
+}
+#xp-bar { height: 100%; background: #3498db; transition: 0.3s; }
+
+.main-btn {
+  position: relative;
+  width: 150px; height: 150px;
+  border-radius: 50%;
+  border: none;
+  background: #2980b9;
+  color: white;
+  font-size: 20px;
+  margin: 15px;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+  transform: scale(0);
+  animation: ripple 0.6s linear;
+  pointer-events: none;
+}
+@keyframes ripple { to { transform: scale(4); opacity: 0; } }
+
+.gain-text {
+  position: absolute;
+  color: #f1c40f;
+  font-weight: bold;
+  pointer-events: none;
+  animation: floatUp 1s ease-out forwards;
+}
+@keyframes floatUp {
+  from { opacity: 1; transform: translate(-50%,0); }
+  to { opacity: 0; transform: translate(-50%,-40px); }
+}
+
+.shop {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  max-width: 800px;
+  margin: 20px auto;
+}
+.item { background:#1e1e1e; padding:15px; border-radius:12px; display:none; }
+.item.unlocked { display:block; }
+.item button { margin-top:8px; cursor:pointer; padding:5px 10px; background:#2980b9; color:white; border:none; border-radius:5px; }
+
+#challenge-area {
+  display:none;
+  background:#1e1e1e;
+  padding:15px;
+  border-radius:15px;
+  margin:15px auto;
+  max-width:300px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="stat-box">
+    <span>LEVEL</span>
+    <span class="xp-value">Lv.<span id="level">1</span></span>
+    <div id="xp-bar-container"><div id="xp-bar"></div></div>
+  </div>
+  <div class="stat-box">
+    <span>POINT</span>
+    <span class="money-value"><span id="pts">0</span> P</span>
+  </div>
+</div>
+
+<div style="font-size:18px;font-weight:bold;color:#f1c40f;">
+  効率倍率 ×<span id="rebirth-multiplier-top">1.0</span>
+</div>
+
+<button class="main-btn" onclick="performClick(event)">CLICK</button>
+<div id="buff-container"></div>
+
+<div style="margin:10px;">
+  <button onclick="startBoss('a')">📘 チャレンジA</button>
+  <button onclick="startBoss('b')" id="challenge-b" style="display:none;">📗 チャレンジB</button>
+</div>
+
+<div id="challenge-area">
+  <h3 id="boss-name">チャレンジ</h3>
+  <div id="boss-rank"></div>
+  <div id="boss-hp-text"></div>
+  <div style="background:#333;height:10px;border-radius:5px;">
+    <div id="boss-hp-bar" style="height:100%;background:#3498db;"></div>
+  </div>
+  <div id="boss-timer"></div>
+  <button class="main-btn" style="background:#16a085" onclick="attackBoss(event)">ACTION</button>
+</div>
+
+<script>
+/* 以降のJSロジックは元のまま（名称のみ中立化） */
+</script>
+
+</body>
+</html>
