@@ -3,83 +3,93 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>クリック練習シミュレーター：完全版</title>
+<title>クリック学習シミュレーター：完全版</title>
 
 <style>
 * { touch-action: manipulation; user-select: none; }
 body {
   text-align: center;
   font-family: sans-serif;
-  background-color: #121212;
-  color: #e0e0e0;
-  padding: 20px;
+  background:#121212;
+  color:#e0e0e0;
+  padding:20px;
 }
 .header {
-  display: flex;
-  justify-content: space-around;
-  background: #1e1e1e;
-  padding: 15px;
-  border-radius: 15px;
-  margin-bottom: 20px;
+  display:flex;
+  justify-content:space-around;
+  background:#1e1e1e;
+  padding:15px;
+  border-radius:15px;
+  margin-bottom:20px;
 }
-.stat-box { display: flex; flex-direction: column; }
-.xp-value { font-size: 24px; color: #3498db; font-weight: bold; }
-.money-value { font-size: 24px; color: #f1c40f; font-weight: bold; }
+.stat-box{display:flex;flex-direction:column;}
+.xp-value{font-size:24px;color:#3498db;font-weight:bold;}
+.money-value{font-size:24px;color:#f1c40f;font-weight:bold;}
 
-#xp-bar-container {
-  width: 200px; height: 10px;
-  background: #333; border-radius: 5px;
-  margin: 5px auto;
+#xp-bar-container{
+  width:200px;height:10px;
+  background:#333;border-radius:5px;
+  margin:5px auto;
 }
-#xp-bar { height: 100%; background: #3498db; transition: 0.3s; }
+#xp-bar{height:100%;background:#3498db;transition:0.3s;}
 
-.main-btn {
-  position: relative;
-  width: 150px; height: 150px;
-  border-radius: 50%;
-  border: none;
-  background: #2980b9;
-  color: white;
-  font-size: 20px;
-  margin: 15px;
-  cursor: pointer;
-  overflow: hidden;
-}
-
-.ripple {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.4);
-  transform: scale(0);
-  animation: ripple 0.6s linear;
-  pointer-events: none;
-}
-@keyframes ripple { to { transform: scale(4); opacity: 0; } }
-
-.gain-text {
-  position: absolute;
-  color: #f1c40f;
-  font-weight: bold;
-  pointer-events: none;
-  animation: floatUp 1s ease-out forwards;
-}
-@keyframes floatUp {
-  from { opacity: 1; transform: translate(-50%,0); }
-  to { opacity: 0; transform: translate(-50%,-40px); }
+.main-btn{
+  position:relative;
+  width:150px;height:150px;
+  border-radius:50%;
+  border:none;
+  background:#2980b9;
+  color:white;
+  font-size:20px;
+  margin:15px;
+  cursor:pointer;
+  overflow:hidden;
 }
 
-.shop {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 15px;
-  max-width: 800px;
-  margin: 20px auto;
+.ripple{
+  position:absolute;
+  border-radius:50%;
+  background:rgba(255,255,255,0.4);
+  transform:scale(0);
+  animation:ripple 0.6s linear;
+  pointer-events:none;
 }
-.item { background:#1e1e1e; padding:15px; border-radius:12px; display:none; }
-.item.unlocked { display:block; }
-.item button { margin-top:8px; cursor:pointer; padding:5px 10px; background:#2980b9; color:white; border:none; border-radius:5px; }
+@keyframes ripple{
+  to{transform:scale(4);opacity:0;}
+}
 
-#challenge-area {
+.gain-text{
+  position:absolute;
+  color:#f1c40f;
+  font-weight:bold;
+  pointer-events:none;
+  animation:floatUp 1s ease-out forwards;
+}
+@keyframes floatUp{
+  from{opacity:1;transform:translate(-50%,0);}
+  to{opacity:0;transform:translate(-50%,-40px);}
+}
+
+.shop{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:15px;
+  max-width:800px;
+  margin:20px auto;
+}
+.item{background:#1e1e1e;padding:15px;border-radius:12px;display:none;}
+.item.unlocked{display:block;}
+.item button{
+  margin-top:8px;
+  cursor:pointer;
+  padding:5px 10px;
+  background:#2980b9;
+  color:white;
+  border:none;
+  border-radius:5px;
+}
+
+#challenge-area{
   display:none;
   background:#1e1e1e;
   padding:15px;
@@ -112,12 +122,12 @@ body {
 <div id="buff-container"></div>
 
 <div style="margin:10px;">
-  <button onclick="startBoss('a')">📘 チャレンジA</button>
-  <button onclick="startBoss('b')" id="challenge-b" style="display:none;">📗 チャレンジB</button>
+  <button onclick="startBoss('a')" id="btnA">📘 チャレンジA</button>
+  <button onclick="startBoss('b')" id="btnB" style="display:none;">📗 チャレンジB</button>
 </div>
 
 <div id="challenge-area">
-  <h3 id="boss-name">チャレンジ</h3>
+  <h3 id="boss-name"></h3>
   <div id="boss-rank"></div>
   <div id="boss-hp-text"></div>
   <div style="background:#333;height:10px;border-radius:5px;">
@@ -128,7 +138,133 @@ body {
 </div>
 
 <script>
-/* 以降のJSロジックは元のまま（名称のみ中立化） */
+let gameData={
+  pts:0,xp:0,level:1,power:1,
+  autoAmount:0,boostUntil:0,rebirth:0
+};
+
+let bossData={
+  active:false,
+  type:null,
+  hp:0,maxHp:0,time:0,timer:null
+};
+
+const format=n=>Math.floor(n).toLocaleString();
+const getNextXP=lv=>Math.floor(100*Math.pow(1.5,lv-1));
+
+/* 効果音 */
+let audioCtx=null;
+function playSE(f,d=0.1){
+  try{
+    if(!audioCtx) audioCtx=new (AudioContext||webkitAudioContext)();
+    const o=audioCtx.createOscillator();
+    const g=audioCtx.createGain();
+    o.frequency.value=f;
+    g.gain.setValueAtTime(0.15,audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.01,audioCtx.currentTime+d);
+    o.connect(g);g.connect(audioCtx.destination);
+    o.start();o.stop(audioCtx.currentTime+d);
+  }catch(e){}
+}
+
+function saveGame(){
+  localStorage.setItem("studyClickSave",JSON.stringify(gameData));
+}
+function loadGame(){
+  const s=localStorage.getItem("studyClickSave");
+  if(s) gameData=JSON.parse(s);
+}
+
+function updateDisplay(){
+  let need=getNextXP(gameData.level);
+  while(gameData.xp>=need){
+    gameData.xp-=need;gameData.level++;
+    need=getNextXP(gameData.level);
+  }
+  pts.innerText=format(gameData.pts);
+  level.innerText=gameData.level;
+  xpbar.style.width=(gameData.xp/need*100)+"%";
+  rebirthmultipliertop.innerText=(1+gameData.rebirth*0.2).toFixed(1);
+  if(gameData.level>=20) btnB.style.display="inline-block";
+  saveGame();
+}
+
+function performClick(e){
+  const mult=1+gameData.rebirth*0.2;
+  const gain=Math.floor(gameData.power*mult);
+  gameData.pts+=gain;
+  gameData.xp+=gain*2;
+
+  const r=document.createElement("div");
+  r.className="ripple";
+  r.style.width=r.style.height="150px";
+  r.style.left="0";r.style.top="0";
+  e.currentTarget.appendChild(r);
+  setTimeout(()=>r.remove(),600);
+
+  const g=document.createElement("div");
+  g.className="gain-text";
+  g.innerText="+"+format(g);
+  g.style.left=e.clientX+"px";
+  g.style.top=e.clientY+"px";
+  document.body.appendChild(g);
+  setTimeout(()=>g.remove(),1000);
+
+  playSE(700,0.05);
+  updateDisplay();
+}
+
+function startBoss(t){
+  bossData.type=t;
+  bossData.maxHp=Math.floor((t==="a"?3000:15000)*(1+gameData.rebirth*0.5));
+  bossData.hp=bossData.maxHp;
+  bossData.time=10;
+  bossData.active=true;
+  challengearea.style.display="block";
+  bossname.innerText=t==="a"?"チャレンジA":"チャレンジB";
+  playSE(200,0.3);
+  bossData.timer=setInterval(()=>{
+    bossData.time--;
+    updateBossUI();
+    if(bossData.time<=0) endBoss(false);
+  },1000);
+  updateBossUI();
+}
+
+function attackBoss(){
+  if(!bossData.active) return;
+  bossData.hp-=Math.floor(gameData.power*(1+gameData.rebirth*0.2));
+  playSE(900,0.08);
+  if(bossData.hp<=0) endBoss(true);
+  updateBossUI();
+}
+
+function updateBossUI(){
+  bosshptext.innerText=`進行 ${format(bossData.hp)}/${format(bossData.maxHp)}`;
+  bosshpbar.style.width=(bossData.hp/bossData.maxHp*100)+"%";
+  bosstimer.innerText=`残り ${bossData.time}s`;
+  bossrank.innerText=`強化段階 ★${gameData.rebirth}`;
+}
+
+function endBoss(win){
+  clearInterval(bossData.timer);
+  challengearea.style.display="none";
+  bossData.active=false;
+  if(win){
+    gameData.pts+=3000;
+    gameData.xp+=500;
+    playSE(1200,0.3);
+  }else{
+    gameData.pts=Math.max(0,gameData.pts-300);
+    playSE(150,0.4);
+  }
+  updateDisplay();
+}
+
+loadGame();
+updateDisplay();
+setInterval(updateDisplay,1000);
+window.addEventListener("beforeunload",saveGame);
 </script>
 
 </body>
